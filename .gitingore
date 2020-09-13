@@ -31,7 +31,7 @@ yarn-error.log
 build/config\.gypi
 
 # IDEs and editors
-/.idea
+/.idea/
 .project
 .classpath
 .c9/
