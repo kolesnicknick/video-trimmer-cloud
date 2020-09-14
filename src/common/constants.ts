@@ -12,3 +12,7 @@ export enum VideoStatus {
   DONE = 'DONE',
   FAILED = 'FAILED',
 }
+
+export const VIDEO_API = '127.0.0.1:9000/';
+
+export const { ADMIN_LOGIN, ADMIN_PASS } = process.env;

@@ -1,6 +1,6 @@
 export interface ITrimData {
-  id: number;
+  id: string;
   starts_from: string;
   duration: string;
   video_path: string;
-};
+}

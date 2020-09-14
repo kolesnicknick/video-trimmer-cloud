@@ -2,7 +2,7 @@ import { processVideoController } from './processVideo.controller';
 import * as cron from 'node-cron';
 
 // change */10 to *
-const schedule = cron.schedule('*/10 * * * * *', processVideoController.processVideo); 
+const schedule = cron.schedule('*/10 * * * * *', processVideoController.processVideo);
 
 export const restartSchedule = () => {
   const time = 5000;

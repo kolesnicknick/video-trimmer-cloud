@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "start:cron": "ts-node src/modules/process-video/processVideo.schedule.ts",
-    "start:conc": "concurrently \"npm run start\" \"npm run start:cron\"",
+    "start:prod": "concurrently \"npm run start\" \"npm run start:cron\"",
     "start:watch": "nodemon",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "build": "rm -rf ./build && tsc"

@@ -5,17 +5,18 @@ import { restartSchedule } from './processVideo.schedule';
 
 import ffmpeg from 'fluent-ffmpeg';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
-import axios from 'axios';
+import { ITrimData } from '../../common/interfaces';
+import { VideoApiClient } from '../../common/VideoApiClient';
+import { ADMIN_LOGIN, ADMIN_PASS } from '../../common/constants'
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-import { ITrimData } from '../../common/interfaces';
-
 class ProcessVideoController {
+  videoApiClient = new VideoApiClient(ADMIN_LOGIN, ADMIN_PASS);
   processVideo = async (): Promise<void> => {
     try {
       console.log('************** RECEIVING DATA FROM SERVER *******************');
-      const res = await axios.get('api/video/get-latest');
+      const res =  await this.videoApiClient.getVideoToTrim();
 
       if (res.status === 404) {
         restartSchedule();
@@ -29,7 +30,7 @@ class ProcessVideoController {
       }: ITrimData = res.data;
 
       console.log('AXIOS.PATCH -> status:', { status: VideoStatus.PROCESSING });
-      await axios.patch(`/api/v1/video/${id}/status`, { status: VideoStatus.PROCESSING });
+      await this.videoApiClient.updateStatus(id, VideoStatus.PROCESSING);
 
       this.trimVideo(id, startsFrom, duration, videoPath);
     }
@@ -55,15 +56,15 @@ class ProcessVideoController {
 
         console.log('AXIOS.PATCH -> url:', { path: trimmedPath });
         console.log('AXIOS.PATCH -> status:', { status: VideoStatus.DONE });
-        await axios.patch(`/api/v1/video/${id}/url`, { path: trimmedPath });
-        await axios.patch(`/api/v1/video/${id}/status`, { status: VideoStatus.DONE });
+        await this.videoApiClient.updateUrl(id, trimmedPath);
+        await this.videoApiClient.updateStatus(id, VideoStatus.DONE);
 
         console.log('conversion Done');
       }
     })
     .on('error', async (err) => {
       console.log('AXIOS.PATCH -> status:', { status: VideoStatus.FAILED });
-      await axios.patch(`/api/v1/video/${id}/status`, { status: VideoStatus.FAILED });
+      await this.videoApiClient.updateStatus(id, VideoStatus.FAILED);
       console.log('error: ', err);
     })
     .run();
